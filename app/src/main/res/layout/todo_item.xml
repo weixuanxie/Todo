@@ -11,11 +11,13 @@
         android:layout_marginEnd="10dp"
         app:cardCornerRadius="0dp">
         <CheckBox
+            android:id="@+id/done_check"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingLeft="35dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:focusable="false"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

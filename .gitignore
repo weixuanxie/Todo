@@ -7,3 +7,6 @@
 /build
 /captures
 .externalNativeBuild
+/.idea/vcs.xml
+将删除 .idea/vcs.xml
+将删除 app/libs/

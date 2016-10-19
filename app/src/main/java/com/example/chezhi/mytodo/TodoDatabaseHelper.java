@@ -10,7 +10,7 @@ import android.widget.Toast;
  */
 
 public class TodoDatabaseHelper extends SQLiteOpenHelper{
-    public static final  String CREATE_TODOLIST="Create table todoList("+"id integer primary key autoincrement,"+"time_todo integer,"+"todo_title text,"+"todo_notes text,"+"tag text)";
+    public static final  String CREATE_TODOLIST="Create table todoList("+"id integer primary key autoincrement,"+"time_todo integer,"+"todo_title text,"+"todo_notes text,"+"todo_done integer DEFAULT '0',"+"tag text)";
     private Context mContext;
     public TodoDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory    factory, int version){
         super(context,name,factory,version);

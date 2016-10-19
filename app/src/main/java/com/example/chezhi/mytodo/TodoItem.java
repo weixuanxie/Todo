@@ -8,6 +8,7 @@ public class TodoItem {
     private String todo_title;
     private String todo_notes;
     private String todo_time;
+    private boolean todo_done;
     public TodoItem(String todo_title,String todo_notes){
         this.todo_title=todo_title;
         this.todo_notes=todo_notes;
@@ -17,6 +18,11 @@ public class TodoItem {
         this.todo_notes=todo_notes;
         this.todo_time=todo_time;
     }
+    public TodoItem(String todo_title,String todo_notes,boolean todo_done){
+        this.todo_title=todo_title;
+        this.todo_notes=todo_notes;
+        this.todo_done=todo_done;
+    }
     protected String getTodo_title(){
         return todo_title;
     }
@@ -25,5 +31,14 @@ public class TodoItem {
     }
     protected String getTodo_time(){
         return todo_time;
+    }
+    protected boolean getTodo_done(){
+        return todo_done;
+    }
+    protected boolean isTodo_done(){
+        return  true;
+    }
+    protected boolean not_done(){
+        return false;
     }
 }
