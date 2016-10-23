@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "com.example.chezhi.mytodo"
-        minSdkVersion 21
+        minSdkVersion 18
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"

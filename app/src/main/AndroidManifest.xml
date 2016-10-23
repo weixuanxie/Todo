@@ -15,10 +15,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AboutThis">
+        </activity>
+        <activity android:name=".NotifyActivity">
+        </activity>
         <activity android:name=".MyDatePicker">
-
         </activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <service android:name=".NotifyService" />
+        <receiver android:name=".AlarmReceiver">
+        </receiver>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

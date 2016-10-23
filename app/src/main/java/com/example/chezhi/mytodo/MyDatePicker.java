@@ -4,11 +4,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import java.util.Calendar;
+
 import static android.icu.util.Calendar.*;
 
 /**
@@ -33,6 +37,9 @@ public class MyDatePicker extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
     private TodoDatabaseHelper dbHelper;
+    private  String date_text=null;
+    private  String time_text=null;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -42,10 +49,10 @@ public class MyDatePicker extends AppCompatActivity {
     public void onCreate(Bundle savedStateInstance) {
         super.onCreate(savedStateInstance);
         setContentView(R.layout.datepicker);
-        calendar = getInstance();
-        mYear = calendar.get(YEAR);
-        mMonth = calendar.get(MONTH);
-        mDay = calendar.get(DATE);
+        calendar = Calendar.getInstance();
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
 //        datebutton = (Button) findViewById(R.id.date_button);
         dbHelper=new TodoDatabaseHelper(this,"TodoList.db",null,1);
         textView = (TextView) findViewById(R.id.date_textview);
@@ -69,9 +76,27 @@ public class MyDatePicker extends AppCompatActivity {
             }
         });
         timetext = (TextView) findViewById(R.id.time_textview);
-//        timebutton = (Button) findViewById(R.id.time_button);
-//        Log.d("MyDatePicker", "timepicker is in use ...");
-       timetext.setOnClickListener(new View.OnClickListener() {
+        Intent intent=getIntent();
+        final String   todo_id=intent.getStringExtra("todoId");
+        Log.d("MyDatePicker.this","the todo id is "+todo_id);
+        String todo_title=intent.getStringExtra("todoTitle");
+        String todo_details=intent.getStringExtra("todoNotes");
+        date_text=intent.getStringExtra("todoDate");
+        time_text=intent.getStringExtra("todoTime");
+        Log.d("MyDatePicker.this","the todo date_text is "+date_text+"the todo time_text is "+time_text);
+        if(!TextUtils.isEmpty(todo_title)){
+            item_title.setText(todo_title);
+        }
+        if(!TextUtils.isEmpty(todo_details)){
+            item_details.setText(todo_details);
+        }
+        if(!TextUtils.isEmpty(date_text)){
+            textView.setText(date_text);
+        }
+        if(!TextUtils.isEmpty(time_text)){
+            timetext.setText(time_text);
+        }
+        timetext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                Log.d("MyDatePicker", "timepicker is in use ...");
@@ -89,10 +114,14 @@ public class MyDatePicker extends AppCompatActivity {
                         String notes=item_details.getText().toString().trim();
                         long time=intTime+intDate;
                         String time2=String.valueOf(time);
-                        Log.d("MyDatePicker.this","title is "+title);
-                        Log.d("MyDatePicker.this","notes is "+notes);
-                        Log.d("MyDatePicker.this","time is "+time);
-                        db.execSQL("insert into todoList(todo_title,todo_notes,time_todo)values(?,?,?)",new String[]{title,notes,time2});
+                        if(!TextUtils.isEmpty(todo_id)){
+                            db.execSQL("update todoList set todo_title=?,todo_notes=?,time_todo=? where id=?",new String[]{title,notes,String.valueOf(getTime()),todo_id});
+                        }
+                        else {
+                            db.execSQL("insert into todoList(todo_title,todo_notes,time_todo)values(?,?,?)",new String[]{title,notes,time2});
+                        }
+                        MainActivity.changeTodoItemList();
+                        MainActivity.changeDoneList();
                         onBackPressed();
                 }
                 return true;
@@ -109,7 +138,7 @@ public class MyDatePicker extends AppCompatActivity {
                     mYear = year;
                     mMonth = month;
                     mDay = dayOfMonth;
-                    intDate=((year-1970)*365+mDay-1+ArrayMonth(year,month)+leapYear(year))*3600*24;
+                    intDate=((year-1970)*365+mDay-1+ArrayMonth(year,month)+leapYear(year,month))*3600*24;
                     Log.d("MyDatePicker.this","intDate is "+intDate);
                     textView.setText("你设定的日期为:" + setDateFormat(year, month, dayOfMonth));
                 }
@@ -132,10 +161,10 @@ public class MyDatePicker extends AppCompatActivity {
         return null;
 //        return timePickerDialog;
     }
-    private int leapYear(int year){
+    private int leapYear(int year,int month){
         int counts=0;
         for (int i=1970;i<year;i++){
-            if(i%4==0&&i%100!=0||i%400==0){
+            if(i%4==0&&i%100!=0||i%400==0&&month>2){
                 counts++;
             }
         }
@@ -153,6 +182,37 @@ public class MyDatePicker extends AppCompatActivity {
         }
         Log.d("MyDatePicker.this","the counts month is "+counts);
         return counts;
+    }
+    protected long getTime(){
+        int year=Integer.parseInt(date_text.substring(0,4));
+        Log.d("MyDatePicker.this","the year is "+year);
+        int month=Integer.parseInt(date_text.substring(5,7));
+        Log.d("MyDatePicker.this"," the month is"+month);
+        int day=Integer.parseInt(date_text.substring(8));
+        Log.d("MyDatePicker.this"," the day is "+day);
+        int hour=Integer.parseInt(time_text.substring(0,2));
+        Log.d("MyDatePicker.this"," the hour is"+hour);
+        int minute=Integer.parseInt(time_text.substring(3,5));
+        Log.d("MyDatePicker.this"," the minute is "+minute);
+        if (textView.getText().equals(date_text)&&timetext.getText().equals(time_text)){
+           return initDate(year,month,day)+initTime(hour,minute);
+        }
+        if(!textView.getText().equals(date_text)&&timetext.getText().equals(time_text)){
+            return intDate+initTime(hour,minute);
+        }
+        if(textView.getText().equals(date_text)&&!timetext.getText().equals(time_text)){
+            return initDate(year,month,day)+intTime;
+        }
+        if (!textView.getText().equals(date_text)&&!timetext.getText().equals(time_text)){
+            return intTime+initDate(year,month-1,day);
+        }
+        return 1;
+    }
+    protected long initDate(int year,int month,int day){
+        return ((year-1970)*365+day-1+ArrayMonth(year,month)+leapYear(year,month))*3600*24;
+    }
+    protected long initTime(int hour,int minute){
+        return hour*3600+minute*60;
     }
 
     private String setDateFormat(int year, int month, int date) {

@@ -1,4 +1,9 @@
 <resources>
-    <string name="app_name">MyToDo</string>
-    <string name="text_undo">UNDO</string>
+    <string name="app_name">Todo</string>
+    <string name="text_undo">Undo</string>
+    <string name="abuot">项目关于：\n这是为一个\n总是忘记要做什么的笨蛋写的\n也是我开发的第一个软件,想到她平时总是忘记什么时候开会啊,或者有什么安排之类的,正好我在学Android开发,我就想要不写一个TODO的应用给她,让她帮忙画一个图标，也顺便练下手。</string>
+    <string name="author">作者:\nchezhi (sdjkdf1@gmail.com)</string>
+    <string name="title">关于</string>
+    <string name="version">Todo V0.1.0</string>
+
 </resources>

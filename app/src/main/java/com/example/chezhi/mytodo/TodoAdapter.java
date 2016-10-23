@@ -18,18 +18,18 @@ import java.util.List;
  * Created by chezhi on 16-10-16.
  */
 
-public class TodoAdapter extends ArrayAdapter<TodoItem> {
+class TodoAdapter extends ArrayAdapter<TodoItem> {
     private int resourceId;
     private TodoDatabaseHelper dbhelper;
     private Context mContext;
-    public TodoAdapter(Context context, int textViewResourceId, List<TodoItem> objects){
+    TodoAdapter(Context context, int textViewResourceId, List<TodoItem> objects){
         super(context,textViewResourceId,objects);
         resourceId=textViewResourceId;
         mContext=context;
     }
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(int position, View convertView, @NonNull ViewGroup parent){
         final TodoItem todoItem=getItem(position);
         dbhelper=new TodoDatabaseHelper(mContext,"TodoList.db",null,1);
         View view= LayoutInflater.from(getContext()).inflate(resourceId,null);

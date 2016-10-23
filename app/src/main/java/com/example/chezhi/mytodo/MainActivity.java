@@ -1,6 +1,7 @@
 package com.example.chezhi.mytodo;
 
 
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private static List<TodoItem> todoItemList = new ArrayList<>();
     private static List<TodoItem> todoDoneList = new ArrayList<>();
     private static TodoAdapter adapter1,adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,31 +53,120 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         Log.d("MainActivity.this","the todoItemList is "+todoItemList);
         ListView listView = (ListView) findViewById(R.id.item_list);
         listView.setDivider(null);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TodoItem todoItem=todoItemList.get(position);
-                Toast.makeText(MainActivity.this,"you click the  "+todoItem.getTodo_title(),Toast.LENGTH_SHORT).show();
-                Log.d("MainActivity.this","i am here ");
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                menu.setHeaderTitle("菜单");
+                menu.add(0,1,0,"编辑");
+                menu.add(0,2,0,"删除");
             }
         });
         listView.setAdapter(adapter);
         adapter1=new TodoAdapter(MainActivity.this,R.layout.todo_item,todoDoneList);
         initDoneList();
         Log.d("MainActivity.this","the todoDoneList is "+todoDoneList);
-        ListView done_listview=(ListView)findViewById(R.id.done_list);
-        done_listview.setDivider(null);
-        done_listview.setAdapter(adapter1);
+        ListView done_listView=(ListView)findViewById(R.id.done_list);
+        done_listView.setDivider(null);
+        done_listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                menu.setHeaderTitle("菜单");
+                menu.add(0,3,0,"编辑");
+                menu.add(0,4,0,"删除");
+            }
+        });
+        done_listView.setAdapter(adapter1);
     }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        ContextMenu.ContextMenuInfo info=item.getMenuInfo();
+        AdapterView.AdapterContextMenuInfo menuInfo=(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position=menuInfo.position;
+        int id=todoItemList.get(position).getId();
+        Log.d("MainActivity.this","the id is "+id);
+        String stringId=String.valueOf(id);
+        SQLiteDatabase dp=dbhelper.getWritableDatabase();
+        switch (item.getItemId()){
+            case 1:
+                Cursor cursor=dp.rawQuery("select id,todo_title,todo_notes,datetime(time_todo,'unixepoch') from todoList where id=?",new String[]{stringId});
+                if(cursor.moveToFirst()){
+                    do{
+                        String todoTitle = cursor.getString(cursor.getColumnIndex("todo_title"));
+                        String todoNotes = cursor.getString(cursor.getColumnIndex("todo_notes"));
+                        String todoTime = cursor.getString(3);
+                        String todoTime1,todoTime2;
+                        Intent intent=new Intent(MainActivity.this,MyDatePicker.class);
+                        intent.putExtra("todoId",stringId);
+                        intent.putExtra("todoTitle",todoTitle);
+                        intent.putExtra("todoNotes",todoNotes);
+                        if (!todoTime.equals("1970-01-01 00:00:00")){
+                            todoTime1 = todoTime.substring(0,10);
+                            todoTime2 = todoTime.substring(11);
+                            intent.putExtra("todoDate",todoTime1);
+                            intent.putExtra("todoTime",todoTime2);
+                        }
+                        startActivity(intent);
+                    }while (cursor.moveToNext());
+                }
+                cursor.close();
+                /*Intent intent=new Intent(MainActivity.this,TodoAdapter.class);
+                startActivity(intent);*/
+                break;
+            case 2:
+                dp.execSQL("update todoList set delete_flag=? where id=?",new String[]{"1",stringId});
+                changeDoneList();
+                changeTodoItemList();
+                break;
+            case 3:
+                id=todoDoneList.get(position).getId();
+                Log.d("MainActivity.this","the id is "+id);
+                stringId=String.valueOf(id);
+                cursor=dp.rawQuery("select id,todo_title,todo_notes,datetime(time_todo,'unixepoch') from todoList where id=?",new String[]{stringId});
+                if(cursor.moveToFirst()){
+                    do{
+                        String todoTitle = cursor.getString(cursor.getColumnIndex("todo_title"));
+                        String todoNotes = cursor.getString(cursor.getColumnIndex("todo_notes"));
+                        String todoTime = cursor.getString(3);
+                        String todoTime1,todoTime2;
+                        Intent intent=new Intent(MainActivity.this,MyDatePicker.class);
+                        intent.putExtra("todoId",stringId);
+                        intent.putExtra("todoTitle",todoTitle);
+                        intent.putExtra("todoNotes",todoNotes);
+                        if (!todoTime.equals("1970-01-01 00:00:00")){
+                            todoTime1 = todoTime.substring(0,10);
+                            todoTime2 = todoTime.substring(11);
+                            intent.putExtra("todoDate",todoTime1);
+                            intent.putExtra("todoTime",todoTime2);
+                        }
+                        startActivity(intent);
+                    }while (cursor.moveToNext());
+                }
+                cursor.close();
+                break;
+            case 4:
+                id=todoDoneList.get(position).getId();
+                Log.d("MainActivity.this","the id is "+id);
+                stringId=String.valueOf(id);
+                dp.execSQL("update todoList set delete_flag=? where id=?",new String[]{"1",stringId});
+                changeDoneList();
+                changeTodoItemList();
+                break;
+
+        }
+        return super.onContextItemSelected(item);
+    }
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_favorite:
-                Toast.makeText(this, "Favorite", Toast.LENGTH_SHORT).show();
+            case R.id.item1:
                 return true;
 
-            case R.id.action_search:
-                Toast.makeText(this, "search", Toast.LENGTH_SHORT).show();
+            case R.id.item2:
+                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(MainActivity.this,NotifyActivity.class);
+                startActivity(intent);
                 return true;
         }
 
@@ -84,57 +176,56 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     protected static void initTodoItem() {
         todoItemList.clear();
         SQLiteDatabase db = dbhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select todo_title,todo_notes,datetime(time_todo,'unixepoch') from todoList where todo_done=?",new String[]{"0"});
+        Cursor cursor = db.rawQuery("select id,todo_title,todo_notes,datetime(time_todo,'unixepoch'),datetime(time_todo)  from todoList where todo_done=? AND delete_flag=?",new String[]{"0","0"});
         if (cursor.moveToFirst()) {
             do {
+                int todoId=cursor.getInt(cursor.getColumnIndex("id"));
                 String todoTitle = cursor.getString(cursor.getColumnIndex("todo_title"));
                 String todoNotes = cursor.getString(cursor.getColumnIndex("todo_notes"));
-                String todoTime1 = cursor.getString(2);
-                Log.d("MainActivity.this","the todoTime1 is "+todoTime1);
+                String todoTime1 = cursor.getString(3);
+                int    time = cursor.getInt(4);
                 String todoTime;
                 if (todoTime1.equals("1970-01-01 00:00:00")){
-                    TodoItem todoItem = new TodoItem(todoTitle, todoNotes);
+                    TodoItem todoItem = new TodoItem(todoId,todoTitle, todoNotes);
                     todoItemList.add(todoItem);
                 }
                 else
                 {
                     todoTime = todoTime1.substring(5,10);
-                Log.d("MainActivity.this","the todoTime is "+todoTime);
-                Log.d("MainActivity.this","the todoTitle is "+todoTitle);
-                Log.d("MainActivity.this","the todoNotes is "+todoNotes);
-                TodoItem todoItem = new TodoItem(todoTitle, todoNotes,todoTime);
-                todoItemList.add(todoItem);
-                Log.d("MainActivity.this","the todoItemListInit is "+todoItemList);
-                adapter.notifyDataSetChanged();
+                    TodoItem todoItem = new TodoItem(todoId,todoTitle, todoNotes,todoTime);
+                    todoItemList.add(todoItem);
+                    adapter.notifyDataSetChanged();
                 }
             } while (cursor.moveToNext());
         }
         cursor.close();
     }
+
     protected static void initDoneList(){
         todoDoneList.clear();
         SQLiteDatabase db = dbhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from todoList where todo_done=?", new String[]{"1"});
+        Cursor cursor = db.rawQuery("select * from todoList where todo_done=? AND delete_flag=?", new String[]{"1","0"});
         if (cursor.moveToFirst()) {
             do {
+                int todoId=cursor.getInt(cursor.getColumnIndex("id"));
                 String todoTitle = cursor.getString(cursor.getColumnIndex("todo_title"));
                 String todoNotes = cursor.getString(cursor.getColumnIndex("todo_notes"));
                 boolean todo_done=true;
-                Log.d("MainActivity.this","the done_todoTitle is "+todoTitle);
-                Log.d("MainActivity.this","the done_todootes is "+todoNotes);
-                TodoItem todoItem = new TodoItem(todoTitle, todoNotes,todo_done);
+                TodoItem todoItem = new TodoItem(todoId,todoTitle, todoNotes,todo_done);
                 todoDoneList.add(todoItem);
-                Log.d("MainActivity.this","the todoDoneListInit is "+todoDoneList);
                 adapter1.notifyDataSetChanged();
 
             } while (cursor.moveToNext());
         }
         cursor.close();
     }
+
+
     protected static void changeTodoItemList(){
         initTodoItem();
         adapter.notifyDataSetChanged();
     }
+
     protected static void changeDoneList(){
         initDoneList();
         adapter1.notifyDataSetChanged();

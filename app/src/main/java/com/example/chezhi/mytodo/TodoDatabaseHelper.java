@@ -10,10 +10,11 @@ import android.widget.Toast;
  */
 
 public class TodoDatabaseHelper extends SQLiteOpenHelper{
-    public static final  String CREATE_TODOLIST="Create table todoList("+"id integer primary key autoincrement,"+"time_todo integer,"+"todo_title text,"+"todo_notes text,"+"todo_done integer DEFAULT '0',"+"tag text)";
+    private static final int Version=3;
+    public static final  String CREATE_TODOLIST="Create table todoList(id integer primary key autoincrement,time_todo integer,todo_title text,todo_notes text,todo_done integer DEFAULT '0',delete_flag integer DEFAULT '0',tag text)";
     private Context mContext;
     public TodoDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory    factory, int version){
-        super(context,name,factory,version);
+        super(context,name,factory,Version);
         mContext=context;
     }
     @Override
@@ -23,6 +24,13 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper{
     }
     @Override
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
+        switch (oldVersion){
+            case  1:
 
+            case  2:
+                db.execSQL("alter table todoList add column delete_flag integer DEFAULT '0'");
+            default:
+
+        }
     }
 }
