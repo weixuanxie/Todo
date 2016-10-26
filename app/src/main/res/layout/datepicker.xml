@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:textColorHint="#232323"
             >
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/item_details"
                 android:layout_margin="12dp"
                 android:layout_width="match_parent"

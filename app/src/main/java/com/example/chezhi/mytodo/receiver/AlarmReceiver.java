@@ -1,4 +1,4 @@
-package com.example.chezhi.mytodo;
+package com.example.chezhi.mytodo.receiver;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.chezhi.mytodo.activity.MainActivity;
+import com.example.chezhi.mytodo.service.NotifyService;
+import com.example.chezhi.mytodo.R;
 
 
 /**
@@ -19,13 +22,12 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent){
         Log.d("AlarmReceiver.this","receiver is running");
         NotificationManager manager=(NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
-//        intent=new Intent(context,NotifyActivity.class);
         intent=new Intent(context,MainActivity.class);
         PendingIntent pendingIntent=PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_CANCEL_CURRENT);
-        Notification notification=new Notification.Builder(context).setSmallIcon(R.mipmap.ic_launcher).setContentTitle(NotifyActivity.notifyTitle(0)).setContentText(NotifyActivity.notifyNotes(0)).setContentIntent(pendingIntent).build();
+        Notification notification=new Notification.Builder(context).setSmallIcon(R.mipmap.ic_launcher).setContentTitle(MainActivity.notifyTitle(0)).setContentText(MainActivity.notifyNotes(0)).setContentIntent(pendingIntent).build();
         notification.defaults=Notification.DEFAULT_ALL;
         manager.notify(1,notification);
-        NotifyActivity.removeListitem(0);
+        MainActivity.removeListItem(0);
         Intent intent_service=new Intent(context,NotifyService.class);
         context.startService(intent_service);
         Log.d("AlarmReceiver.this","server is run again");

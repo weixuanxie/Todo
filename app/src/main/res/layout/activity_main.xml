@@ -33,11 +33,11 @@
                 android:textSize="16sp"
                 android:textColor="@color/colorPrimary"
                 android:text="待完成"/>
-            <com.example.chezhi.mytodo.MyListView
+            <com.example.chezhi.mytodo.util.MyListView
                 android:id="@+id/item_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            </com.example.chezhi.mytodo.MyListView>
+            </com.example.chezhi.mytodo.util.MyListView>
             <TextView
                 android:id="@+id/done"
                 android:layout_width="wrap_content"
@@ -47,12 +47,12 @@
                 android:textSize="16sp"
                 android:textColor="@color/colorAccent"
                 android:text="已完成"/>
-            <com.example.chezhi.mytodo.MyListView
+            <com.example.chezhi.mytodo.util.MyListView
                 android:id="@+id/done_list"
                 android:paddingBottom="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            </com.example.chezhi.mytodo.MyListView>
+            </com.example.chezhi.mytodo.util.MyListView>
         </LinearLayout>
     </ScrollView>
     <android.support.design.widget.FloatingActionButton

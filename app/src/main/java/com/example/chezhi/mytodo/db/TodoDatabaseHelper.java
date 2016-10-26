@@ -1,4 +1,4 @@
-package com.example.chezhi.mytodo;
+package com.example.chezhi.mytodo.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class TodoDatabaseHelper extends SQLiteOpenHelper{
     private static final int Version=3;
-    public static final  String CREATE_TODOLIST="Create table todoList(id integer primary key autoincrement,time_todo integer,todo_title text,todo_notes text,todo_done integer DEFAULT '0',delete_flag integer DEFAULT '0',tag text)";
+    private static final  String CREATE_TODOLIST="Create table todoList(id integer primary key autoincrement,time_todo integer,todo_title text,todo_notes text,todo_done integer DEFAULT '0',delete_flag integer DEFAULT '0',tag text)";
     private Context mContext;
     public TodoDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory    factory, int version){
         super(context,name,factory,Version);

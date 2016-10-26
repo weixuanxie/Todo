@@ -5,5 +5,8 @@
     <string name="author">作者:\nchezhi (sdjkdf1@gmail.com)</string>
     <string name="title">关于</string>
     <string name="version">Todo V0.1.0</string>
+    <string name="setting_regular">常规</string>
+    <string name="order">待完成以提醒时间排序</string>
+    <string name="statusNotify">在状态显示添加通知</string>
 
 </resources>

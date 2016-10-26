@@ -1,4 +1,4 @@
-package com.example.chezhi.mytodo;
+package com.example.chezhi.mytodo.model;
 
 /**
  * Created by chezhi on 16-10-16.
@@ -27,7 +27,7 @@ public class TodoItem {
         this.todo_notes=todo_notes;
         this.todo_done=todo_done;
     }
-    int getId(){
+    public int getId(){
         return id;
     }
     String getTodo_title(){

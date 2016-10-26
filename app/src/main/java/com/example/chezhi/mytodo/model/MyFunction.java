@@ -1,4 +1,4 @@
-package com.example.chezhi.mytodo;
+package com.example.chezhi.mytodo.model;
 
 
 /**
@@ -6,12 +6,10 @@ package com.example.chezhi.mytodo;
  */
 
 public class MyFunction {
-    private int id;
     private String todo_title;
     private String todo_notes;
     private long   todo_time;
-    private boolean todo_done;
-    MyFunction(String todo_title,String todo_notes,long todo_time){
+    public MyFunction(String todo_title,String todo_notes,long todo_time){
         this.todo_title=todo_title;
         this.todo_notes=todo_notes;
         this.todo_time=todo_time;

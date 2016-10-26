@@ -1,4 +1,4 @@
-package com.example.chezhi.mytodo;
+package com.example.chezhi.mytodo.activity;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -18,20 +18,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.util.Calendar;
+import com.example.chezhi.mytodo.R;
+import com.example.chezhi.mytodo.activity.MainActivity;
+import com.example.chezhi.mytodo.db.TodoDatabaseHelper;
 
-import static android.icu.util.Calendar.*;
+import java.util.Calendar;
 
 /**
  * Created by chezhi on 16-10-6.
+ * This is for add todoItem.
  */
 
 public class MyDatePicker extends AppCompatActivity {
     private int mYear, mMonth, mDay, mHour, mMinute;
-    private int intDate,intTime;
-    private Calendar calendar;
+    private long intDate,intTime;
     private TextView textView;
-    private TextView timetext;
+    private TextView timeText;
     private EditText item_title;
     private EditText item_details;
     private DatePickerDialog datePickerDialog;
@@ -49,11 +51,11 @@ public class MyDatePicker extends AppCompatActivity {
     public void onCreate(Bundle savedStateInstance) {
         super.onCreate(savedStateInstance);
         setContentView(R.layout.datepicker);
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
-//        datebutton = (Button) findViewById(R.id.date_button);
+        intDate=initDate(mYear,mMonth,mDay);
         dbHelper=new TodoDatabaseHelper(this,"TodoList.db",null,1);
         textView = (TextView) findViewById(R.id.date_textview);
         item_title=(EditText)findViewById(R.id.item_title);
@@ -75,7 +77,7 @@ public class MyDatePicker extends AppCompatActivity {
                 datePickerDialog.updateDate(mYear, mMonth, mDay);
             }
         });
-        timetext = (TextView) findViewById(R.id.time_textview);
+        timeText = (TextView) findViewById(R.id.time_textview);
         Intent intent=getIntent();
         final String   todo_id=intent.getStringExtra("todoId");
         Log.d("MyDatePicker.this","the todo id is "+todo_id);
@@ -94,9 +96,9 @@ public class MyDatePicker extends AppCompatActivity {
             textView.setText(date_text);
         }
         if(!TextUtils.isEmpty(time_text)){
-            timetext.setText(time_text);
+            timeText.setText(time_text);
         }
-        timetext.setOnClickListener(new View.OnClickListener() {
+        timeText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                Log.d("MyDatePicker", "timepicker is in use ...");
@@ -116,9 +118,11 @@ public class MyDatePicker extends AppCompatActivity {
                         String time2=String.valueOf(time);
                         if(!TextUtils.isEmpty(todo_id)){
                             db.execSQL("update todoList set todo_title=?,todo_notes=?,time_todo=? where id=?",new String[]{title,notes,String.valueOf(getTime()),todo_id});
+                            db.close();
                         }
                         else {
                             db.execSQL("insert into todoList(todo_title,todo_notes,time_todo)values(?,?,?)",new String[]{title,notes,time2});
+                            db.close();
                         }
                         MainActivity.changeTodoItemList();
                         MainActivity.changeDoneList();
@@ -140,7 +144,7 @@ public class MyDatePicker extends AppCompatActivity {
                     mDay = dayOfMonth;
                     intDate=((year-1970)*365+mDay-1+ArrayMonth(year,month)+leapYear(year,month))*3600*24;
                     Log.d("MyDatePicker.this","intDate is "+intDate);
-                    textView.setText("你设定的日期为:" + setDateFormat(year, month, dayOfMonth));
+                    textView.setText(setDateFormat(year, month, dayOfMonth));
                 }
             }, mYear, mMonth, mDay);
             return datePickerDialog;
@@ -153,7 +157,7 @@ public class MyDatePicker extends AppCompatActivity {
                     mMinute = minute;
                     intTime=mHour*3600+mMinute*60;
                     Log.d("MyDatePicker.this","intTime is "+intTime);
-                    timetext.setText("你设定的时间为:" + setTimeFormat(hourOfDay, minute));
+                    timeText.setText(setTimeFormat(hourOfDay, minute));
                 }
             }, mHour, mMinute, true);
             return timePickerDialog;
@@ -184,27 +188,30 @@ public class MyDatePicker extends AppCompatActivity {
         return counts;
     }
     protected long getTime(){
+        if(textView.getText().equals(date_text)&&timeText.getText().equals(time_text)&&TextUtils.isEmpty(date_text)&&TextUtils.isEmpty(time_text)){
+            return 0;
+        }
+        if (!textView.getText().equals(date_text)&&!timeText.getText().equals(time_text)){
+            return intTime+intDate;
+        }
         int year=Integer.parseInt(date_text.substring(0,4));
         Log.d("MyDatePicker.this","the year is "+year);
         int month=Integer.parseInt(date_text.substring(5,7));
-        Log.d("MyDatePicker.this"," the month is"+month);
+        Log.d("MyDatePicker.this"," the month is "+month);
         int day=Integer.parseInt(date_text.substring(8));
         Log.d("MyDatePicker.this"," the day is "+day);
         int hour=Integer.parseInt(time_text.substring(0,2));
-        Log.d("MyDatePicker.this"," the hour is"+hour);
+        Log.d("MyDatePicker.this"," the hour is "+hour);
         int minute=Integer.parseInt(time_text.substring(3,5));
         Log.d("MyDatePicker.this"," the minute is "+minute);
-        if (textView.getText().equals(date_text)&&timetext.getText().equals(time_text)){
-           return initDate(year,month,day)+initTime(hour,minute);
+        if (textView.getText().equals(date_text)&&timeText.getText().equals(time_text)&&!TextUtils.isEmpty(date_text)&&!TextUtils.isEmpty(time_text)){
+           return initDate(year,month-1,day)+initTime(hour,minute);
         }
-        if(!textView.getText().equals(date_text)&&timetext.getText().equals(time_text)){
+        if(!textView.getText().equals(date_text)&&timeText.getText().equals(time_text)&&!TextUtils.isEmpty(time_text)){
             return intDate+initTime(hour,minute);
         }
-        if(textView.getText().equals(date_text)&&!timetext.getText().equals(time_text)){
-            return initDate(year,month,day)+intTime;
-        }
-        if (!textView.getText().equals(date_text)&&!timetext.getText().equals(time_text)){
-            return intTime+initDate(year,month-1,day);
+        if(textView.getText().equals(date_text)&&!timeText.getText().equals(time_text)&&!TextUtils.isEmpty(date_text)){
+            return initDate(year,month-1,day)+intTime;
         }
         return 1;
     }
