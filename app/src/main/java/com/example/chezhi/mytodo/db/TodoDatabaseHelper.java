@@ -10,9 +10,10 @@ import android.widget.Toast;
  */
 
 public class TodoDatabaseHelper extends SQLiteOpenHelper{
-    private static final int Version=3;
+    private static final int Version=1;
     private static final  String CREATE_TODOLIST="Create table todoList(id integer primary key autoincrement,time_todo integer,todo_title text,todo_notes text,todo_done integer DEFAULT '0',delete_flag integer DEFAULT '0',tag text)";
-    private Context mContext;
+    private static final  String CREATE_LIST="Create table list(id integer primary key autoincrement,title text,done integer DEFAULT '0',delete_flag integer DEFAULT '0',parent_id integer DEFAULT '0')";
+    Context mContext;
     public TodoDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory    factory, int version){
         super(context,name,factory,Version);
         mContext=context;
@@ -20,7 +21,8 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper{
     @Override
     public  void onCreate(SQLiteDatabase db){
         db.execSQL(CREATE_TODOLIST);
-        Toast.makeText(mContext,"Create succeeded",Toast.LENGTH_SHORT).show();
+        db.execSQL(CREATE_LIST);
+//        Toast.makeText(mContext,"Create succeeded",Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
@@ -29,6 +31,11 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper{
 
             case  2:
                 db.execSQL("alter table todoList add column delete_flag integer DEFAULT '0'");
+            case  3:
+                db.execSQL(CREATE_LIST);
+            case  4:
+                db.execSQL("drop table list");
+                db.execSQL(CREATE_LIST);
             default:
 
         }

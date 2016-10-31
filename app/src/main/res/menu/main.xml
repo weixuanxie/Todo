@@ -3,27 +3,15 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
         <item
-            android:id="@+id/action_favorite"
-            android:icon="@mipmap/ic_search"
-            android:orderInCategory="80"
-            app:showAsAction="ifRoom"
-            android:title="favorite" />
-        <item
-            android:id="@+id/action_search"
-            android:icon="@mipmap/ic_notifications"
-            android:orderInCategory="90"
-            android:title="search"
-            app:showAsAction="ifRoom"/>
-        <item
             android:id="@+id/item1"
             android:orderInCategory="100"
             android:icon="@mipmap/ic_menu_more_overflow"
             app:showAsAction="never"
-            android:title="设置"/>
+            android:title="@string/setting"/>
         <item
             android:id="@+id/item2"
             android:orderInCategory="100"
             android:icon="@mipmap/ic_menu_more_overflow"
             app:showAsAction="never"
-            android:title="关于"/>
+            android:title="@string/about_this"/>
     </menu>

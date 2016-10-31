@@ -51,16 +51,19 @@ public class MyDatePicker extends AppCompatActivity {
     public void onCreate(Bundle savedStateInstance) {
         super.onCreate(savedStateInstance);
         setContentView(R.layout.datepicker);
+
         Calendar calendar = Calendar.getInstance();
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
         intDate=initDate(mYear,mMonth,mDay);
         dbHelper=new TodoDatabaseHelper(this,"TodoList.db",null,1);
+
         textView = (TextView) findViewById(R.id.date_textview);
         item_title=(EditText)findViewById(R.id.item_title);
         item_details=(EditText)findViewById(R.id.item_details);
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar_swipe);
+
         toolbar.inflateMenu(R.menu.item_details);
         toolbar.setNavigationIcon(R.mipmap.ic_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -77,6 +80,7 @@ public class MyDatePicker extends AppCompatActivity {
                 datePickerDialog.updateDate(mYear, mMonth, mDay);
             }
         });
+
         timeText = (TextView) findViewById(R.id.time_textview);
         Intent intent=getIntent();
         final String   todo_id=intent.getStringExtra("todoId");
@@ -86,6 +90,7 @@ public class MyDatePicker extends AppCompatActivity {
         date_text=intent.getStringExtra("todoDate");
         time_text=intent.getStringExtra("todoTime");
         Log.d("MyDatePicker.this","the todo date_text is "+date_text+"the todo time_text is "+time_text);
+
         if(!TextUtils.isEmpty(todo_title)){
             item_title.setText(todo_title);
         }
@@ -106,6 +111,7 @@ public class MyDatePicker extends AppCompatActivity {
                 timePickerDialog.updateTime(mHour,mMinute);
             }
         });
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -195,15 +201,15 @@ public class MyDatePicker extends AppCompatActivity {
             return intTime+intDate;
         }
         int year=Integer.parseInt(date_text.substring(0,4));
-        Log.d("MyDatePicker.this","the year is "+year);
+//        Log.d("MyDatePicker.this","the year is "+year);
         int month=Integer.parseInt(date_text.substring(5,7));
-        Log.d("MyDatePicker.this"," the month is "+month);
+//        Log.d("MyDatePicker.this"," the month is "+month);
         int day=Integer.parseInt(date_text.substring(8));
-        Log.d("MyDatePicker.this"," the day is "+day);
+//        Log.d("MyDatePicker.this"," the day is "+day);
         int hour=Integer.parseInt(time_text.substring(0,2));
-        Log.d("MyDatePicker.this"," the hour is "+hour);
+//        Log.d("MyDatePicker.this"," the hour is "+hour);
         int minute=Integer.parseInt(time_text.substring(3,5));
-        Log.d("MyDatePicker.this"," the minute is "+minute);
+//        Log.d("MyDatePicker.this"," the minute is "+minute);
         if (textView.getText().equals(date_text)&&timeText.getText().equals(time_text)&&!TextUtils.isEmpty(date_text)&&!TextUtils.isEmpty(time_text)){
            return initDate(year,month-1,day)+initTime(hour,minute);
         }

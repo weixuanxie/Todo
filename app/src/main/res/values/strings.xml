@@ -8,5 +8,20 @@
     <string name="setting_regular">常规</string>
     <string name="order">待完成以提醒时间排序</string>
     <string name="statusNotify">在状态显示添加通知</string>
+    <string name="todoList">添加清单</string>
+    <string name="notDone">待完成</string>
+    <string name="done">已完成</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="add_list">添加清单</string>
+    <string name="list_name">清单名字</string>
+    <string name="item_name">新建项目</string>
+    <string name="setting">设置</string>
+    <string name="about_this">关于</string>
+    <string name="delete">删除清单</string>
 
 </resources>

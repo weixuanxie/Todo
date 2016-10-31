@@ -5,7 +5,11 @@ package com.example.chezhi.mytodo.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,11 +20,13 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.example.chezhi.mytodo.model.MyFunction;
-import com.example.chezhi.mytodo.service.NotifyService;
 import com.example.chezhi.mytodo.R;
+import com.example.chezhi.mytodo.model.ListItem;
+import com.example.chezhi.mytodo.model.MyFunction;
+import com.example.chezhi.mytodo.model.MyListAdapter2;
+import com.example.chezhi.mytodo.service.NotifyService;
 import com.example.chezhi.mytodo.model.TodoAdapter;
 import com.example.chezhi.mytodo.db.TodoDatabaseHelper;
 import com.example.chezhi.mytodo.model.TodoItem;
@@ -33,7 +39,11 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private static List<TodoItem> todoItemList = new ArrayList<>();
     private static List<TodoItem> todoDoneList = new ArrayList<>();
     private static List<MyFunction> notifyList = new ArrayList<>();
-    private static TodoAdapter adapter1,adapter;
+    private static List<ListItem> lists = new ArrayList<>();
+    private static TodoAdapter adapter,adapter1;
+    private static MyListAdapter2 adapter2;
+    DrawerLayout drawer;
+    TextView addList;
 
     @Override
     protected void onStart(){
@@ -42,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         startService(sIntent);
         Log.d("MainActivity.this","the MainActivity is start...");
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,10 +60,17 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.main);
-        /*Intent sIntent=new Intent(MainActivity.this,NotifyService.class);
-        startService(sIntent);*/
-        toolbar.setNavigationIcon(R.mipmap.ic_drawer_home);
         toolbar.setOnMenuItemClickListener(this);
+
+        drawer=(DrawerLayout)findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView=(NavigationView)findViewById(R.id.navigation_view);
+//        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        setupDrawerContent(navigationView);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +80,16 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 startActivity(intent);
             }
         });
+        addList=(TextView)findViewById(R.id.todoList_add);
+        addList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("MainActivity.this","your click the todoList_add");
+                Intent intent=new Intent(MainActivity.this,AddList.class);
+                startActivity(intent);
+            }
+        });
+
         dbhelper=new TodoDatabaseHelper(this,"TodoList.db",null,1);
         sqlFunction();
         adapter = new TodoAdapter(MainActivity.this, R.layout.todo_item, todoItemList);
@@ -69,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         Log.d("MainActivity.this","the todoItemList is "+todoItemList);
         ListView listView = (ListView) findViewById(R.id.item_list);
         listView.setDivider(null);
+        listView.setAdapter(adapter);
         listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -77,12 +106,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 menu.add(0,2,0,"删除");
             }
         });
-        listView.setAdapter(adapter);
+
         adapter1=new TodoAdapter(MainActivity.this,R.layout.todo_item,todoDoneList);
         initDoneList();
         Log.d("MainActivity.this","the todoDoneList is "+todoDoneList);
         ListView done_listView=(ListView)findViewById(R.id.done_list);
         done_listView.setDivider(null);
+        done_listView.setAdapter(adapter1);
         done_listView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -91,7 +121,48 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 menu.add(0,4,0,"删除");
             }
         });
-        done_listView.setAdapter(adapter1);
+
+        adapter2=new MyListAdapter2(MainActivity.this,R.layout.list_item,lists);
+        initDrawerList();
+        final ListView drawer_list=(ListView)findViewById(R.id.drawer_list);
+        drawer_list.setDivider(null);
+        drawer_list.setAdapter(adapter2);
+        drawer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                long listId=lists.get(position).getId();
+                String stringId=String.valueOf(listId);
+                String title=lists.get(position).getTitle();
+                Intent intent=new Intent(MainActivity.this,ListDetail.class);
+                Log.d("MainActivity.this","the listId is "+stringId);
+                Log.d("MainActivity.this","the title is "+title);
+                intent.putExtra("id",stringId);
+                intent.putExtra("title",title);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    public void setupDrawerContent(NavigationView navigationView){
+        Log.d("MainActivity.this","i am here");
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.todoList_add:
+                       /* Intent intent=new Intent(MainActivity.this,AboutThis.class);
+                        startActivity(intent);*/
+                        Log.d("MainActivity.this","your click the todoList_add");
+                        Intent intent=new Intent(MainActivity.this,AddList.class);
+                        startActivity(intent);
+                        break;
+                }
+                item.setChecked(true);
+                drawer.closeDrawers();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -177,16 +248,32 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item1:
-                return true;
+                Intent intent_se=new Intent(MainActivity.this,Setting.class);
+                startActivity(intent_se);
+                break;
 
             case R.id.item2:
-                Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(MainActivity.this,AboutThis.class);
                 startActivity(intent);
-                return true;
+                break;
         }
 
         return true;
+    }
+
+    protected static void initDrawerList() {
+        lists.clear();
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select id,title from list where  delete_flag=? and parent_id=?",new String[]{"0","0"});
+        if (cursor.moveToFirst()) {
+            do {
+                int id=cursor.getInt(cursor.getColumnIndex("id"));
+                String title = cursor.getString(cursor.getColumnIndex("title"));
+                ListItem listItem=new ListItem(id,title);
+                lists.add(listItem);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
     }
 
     protected static void initTodoItem() {
@@ -244,6 +331,10 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         initDoneList();
         adapter1.notifyDataSetChanged();
     }
+    public static void changeDrawerList(){
+        initDrawerList();
+        adapter2.notifyDataSetChanged();
+    }
     protected static void sqlFunction(){
         SQLiteDatabase db = dbhelper.getWritableDatabase();
         long time=System.currentTimeMillis()+8*3600*1000;
@@ -264,22 +355,27 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
         cursor.close();
     }
+
     public static int notifySize(){
         sqlFunction();
         return notifyList.size();
     }
+
     public static long notifyTime(int position){
         sqlFunction();
         return notifyList.get(position).getTodo_time();
     }
+
     public static String notifyTitle(int position){
         sqlFunction();
         return notifyList.get(position).getTodo_title();
     }
+
     public static String notifyNotes(int position) {
         sqlFunction();
         return notifyList.get(position).getTodo_notes();
     }
+
     public static void removeListItem(int position){
         notifyList.remove(position);
     }
