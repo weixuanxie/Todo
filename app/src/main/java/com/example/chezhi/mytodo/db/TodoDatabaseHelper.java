@@ -3,10 +3,10 @@ package com.example.chezhi.mytodo.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 /**
  * Created by chezhi on 16-10-15.
+ *
  */
 
 public class TodoDatabaseHelper extends SQLiteOpenHelper{
@@ -22,7 +22,6 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper{
     public  void onCreate(SQLiteDatabase db){
         db.execSQL(CREATE_TODOLIST);
         db.execSQL(CREATE_LIST);
-//        Toast.makeText(mContext,"Create succeeded",Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){

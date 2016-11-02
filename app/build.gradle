@@ -4,11 +4,11 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
     defaultConfig {
-        applicationId "com.example.chezhi.mytodo"
+        applicationId "com.chezhi.mytodo"
         minSdkVersion 18
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -3,8 +3,10 @@ package com.example.chezhi.mytodo.activity;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private static MyListAdapter2 adapter2;
     DrawerLayout drawer;
     TextView addList;
+    SharedPreferences pref;
+    static boolean ck_state=false;
 
     @Override
     protected void onStart(){
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         Intent sIntent=new Intent(MainActivity.this,NotifyService.class);
         startService(sIntent);
         Log.d("MainActivity.this","the MainActivity is start...");
+
     }
 
     @Override
@@ -90,11 +95,18 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             }
         });
 
+        pref= PreferenceManager.getDefaultSharedPreferences(this);
+        boolean time_desc=pref.getBoolean("time_desc",false);
+        if (time_desc){
+            ck_state=true;
+        }
+        Log.d("MainActivity.this","the ck_state is "+ck_state);
+        Log.d("MainActivity.this","the time desc is "+time_desc);
         dbhelper=new TodoDatabaseHelper(this,"TodoList.db",null,1);
         sqlFunction();
         adapter = new TodoAdapter(MainActivity.this, R.layout.todo_item, todoItemList);
         initTodoItem();
-        Log.d("MainActivity.this","the todoItemList is "+todoItemList);
+
         ListView listView = (ListView) findViewById(R.id.item_list);
         listView.setDivider(null);
         listView.setAdapter(adapter);
@@ -109,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         adapter1=new TodoAdapter(MainActivity.this,R.layout.todo_item,todoDoneList);
         initDoneList();
-        Log.d("MainActivity.this","the todoDoneList is "+todoDoneList);
+
         ListView done_listView=(ListView)findViewById(R.id.done_list);
         done_listView.setDivider(null);
         done_listView.setAdapter(adapter1);
@@ -278,8 +290,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     protected static void initTodoItem() {
         todoItemList.clear();
+        Cursor cursor;
         SQLiteDatabase db = dbhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select id,todo_title,todo_notes,datetime(time_todo,'unixepoch')  from todoList where todo_done=? AND delete_flag=?",new String[]{"0","0"});
+        if(ck_state){
+            cursor = db.rawQuery("select id,todo_title,todo_notes,datetime(time_todo,'unixepoch')  from todoList where todo_done=? AND delete_flag=? order by datetime(time_todo) desc",new String[]{"0","0"});
+        }else {
+        cursor = db.rawQuery("select id,todo_title,todo_notes,datetime(time_todo,'unixepoch')  from todoList where todo_done=? AND delete_flag=?",new String[]{"0","0"});
+        }
         if (cursor.moveToFirst()) {
             do {
                 int todoId=cursor.getInt(cursor.getColumnIndex("id"));
@@ -305,8 +322,9 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     protected static void initDoneList(){
         todoDoneList.clear();
+        Cursor cursor;
         SQLiteDatabase db = dbhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from todoList where todo_done=? AND delete_flag=?", new String[]{"1","0"});
+        cursor = db.rawQuery("select * from todoList where todo_done=? AND delete_flag=?", new String[]{"1","0"});
         if (cursor.moveToFirst()) {
             do {
                 int todoId=cursor.getInt(cursor.getColumnIndex("id"));
@@ -347,7 +365,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 long    triggerTime = cursor.getInt(4);
                 triggerTime=triggerTime*1000;
                 if (triggerTime>=time){
-                    Log.d("MyFunction.this","i find it");
                     MyFunction myFunction= new MyFunction(todoTitle, todoNotes,triggerTime);
                     notifyList.add(myFunction);
                 }

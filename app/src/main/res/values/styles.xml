@@ -13,6 +13,9 @@
         <item name="android:textColorPrimary">@color/colorAccent</item>
     </style>
 
+    <style name="editTextColor">
+        <item name="colorAccent">#999999</item>
+    </style>
     <style name="ToolbarTextAppearance">
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:textColor">@android:color/white</item>

@@ -30,7 +30,7 @@ public class NotifyService extends Service {
                         }
                     }).start();
                     if(MainActivity.notifySize()==0){
-                        Log.d("NotifyService.this","the notify list is empty service will stop");
+                        Log.d("NotifyService.this","the notify list is empty and service will stop");
                         stopSelf();
                     }
                     else{

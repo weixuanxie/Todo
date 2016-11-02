@@ -21,9 +21,11 @@
                 android:id="@+id/item_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="0dp"
                 android:textColor="#ffffff"
                 android:maxLines="1"
-                android:hint="TODO标题"/>
+                android:hint="@string/todo_title"/>
         </android.support.design.widget.TextInputLayout>
     </android.support.v7.widget.Toolbar>
     <LinearLayout
@@ -33,7 +35,7 @@
         <ImageView android:id="@+id/item_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="18dp"
+            android:padding="21dp"
             android:layout_gravity="center"
             android:src="@mipmap/ic_label"
             />
@@ -44,13 +46,13 @@
             >
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/item_details"
-                android:layout_margin="12dp"
+                android:layout_margin="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textColor="#232323"
                 android:maxLines="2"
-                android:hint="描述"/>
+                android:hint="@string/todo_detail"/>
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
     <TableLayout
@@ -61,7 +63,7 @@
             <ImageView android:id="@+id/image_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="18dp"
+                android:padding="21dp"
                 android:src="@mipmap/ic_today"/>
             <TextView
                 android:clickable="true"
@@ -69,14 +71,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#232323"
-                android:padding="18dp"
-                android:text="选定日期"/>
+                android:padding="21dp"
+                android:text="@string/se_date"/>
         </TableRow>
         <TableRow>
             <ImageView android:id="@+id/image_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="18dp"
+                android:padding="21dp"
                 android:src="@mipmap/ic_alarm"/>
             <TextView
                 android:clickable="true"
@@ -84,8 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#232323"
-                android:padding="18dp"
-                android:text="选定时间"/>
+                android:padding="21dp"
+                android:text="@string/se_time"/>
         </TableRow>
 
     </TableLayout>
