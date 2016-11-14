@@ -4,9 +4,11 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -221,9 +223,11 @@ public class MyDatePicker extends AppCompatActivity {
         }
         return 1;
     }
+
     protected long initDate(int year,int month,int day){
         return ((year-1970)*365+day-1+ArrayMonth(year,month)+leapYear(year,month))*3600*24;
     }
+
     protected long initTime(int hour,int minute){
         return hour*3600+minute*60;
     }

@@ -32,6 +32,7 @@ import com.example.chezhi.mytodo.service.NotifyService;
 import com.example.chezhi.mytodo.model.TodoAdapter;
 import com.example.chezhi.mytodo.db.TodoDatabaseHelper;
 import com.example.chezhi.mytodo.model.TodoItem;
+import com.example.chezhi.mytodo.service.StatusNotifyService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     protected void onStart(){
         super.onStart();
         Intent sIntent=new Intent(MainActivity.this,NotifyService.class);
+        notifyList.clear();
         startService(sIntent);
+        boolean status_notify=pref.getBoolean("status_notify",false);
+        if (status_notify){
+            Intent intentService=new Intent(MainActivity.this, StatusNotifyService.class);
+            startService(intentService);
+        }
         Log.d("MainActivity.this","the MainActivity is start...");
 
     }
@@ -85,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 startActivity(intent);
             }
         });
+
         addList=(TextView)findViewById(R.id.todoList_add);
         addList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,10 +108,15 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if (time_desc){
             ck_state=true;
         }
+        /*boolean status_notify=pref.getBoolean("status_notify",false);
+        if (status_notify){
+            Intent intentService=new Intent(MainActivity.this, StatusNotifyService.class);
+            startService(intentService);
+        }*/
         Log.d("MainActivity.this","the ck_state is "+ck_state);
         Log.d("MainActivity.this","the time desc is "+time_desc);
         dbhelper=new TodoDatabaseHelper(this,"TodoList.db",null,1);
-        sqlFunction();
+//        sqlFunction();
         adapter = new TodoAdapter(MainActivity.this, R.layout.todo_item, todoItemList);
         initTodoItem();
 
@@ -353,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         initDrawerList();
         adapter2.notifyDataSetChanged();
     }
-    protected static void sqlFunction(){
+    public static void sqlFunction(){
         SQLiteDatabase db = dbhelper.getWritableDatabase();
         long time=System.currentTimeMillis()+8*3600*1000;
         Cursor cursor = db.rawQuery("select id,todo_title,todo_notes,datetime(time_todo,'unixepoch'),time_todo  from todoList where todo_done=? AND delete_flag=? order by datetime(time_todo) asc",new String[]{"0","0"});
@@ -374,22 +387,18 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     public static int notifySize(){
-        sqlFunction();
         return notifyList.size();
     }
 
     public static long notifyTime(int position){
-        sqlFunction();
         return notifyList.get(position).getTodo_time();
     }
 
     public static String notifyTitle(int position){
-        sqlFunction();
         return notifyList.get(position).getTodo_title();
     }
 
     public static String notifyNotes(int position) {
-        sqlFunction();
         return notifyList.get(position).getTodo_notes();
     }
 

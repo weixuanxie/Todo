@@ -48,6 +48,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
+            <LinearLayout
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/statusNotify"/>
+                <CheckBox
+                    android:id="@+id/cb_status_notify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

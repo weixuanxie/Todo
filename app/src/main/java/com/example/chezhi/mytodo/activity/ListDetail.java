@@ -39,6 +39,7 @@ public class ListDetail extends AppCompatActivity implements Toolbar.OnMenuItemC
     private static List<ListItem> doneList = new ArrayList<>();
     private static MyListAdapter adapter,adapter1;
     static String id;
+    static String de_title;
     SQLiteDatabase db;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -51,6 +52,7 @@ public class ListDetail extends AppCompatActivity implements Toolbar.OnMenuItemC
         final String parent_id=intent.getStringExtra("id");
         id=parent_id;
         String title=intent.getStringExtra("title");
+        de_title=title;
 
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar_list);
         toolbar.inflateMenu(R.menu.list_item_menu);
@@ -129,9 +131,21 @@ public class ListDetail extends AppCompatActivity implements Toolbar.OnMenuItemC
     public boolean onMenuItemClick(MenuItem item){
         switch (item.getItemId()){
             case R.id.list_delete:
-                db.execSQL("update list set delete_flag=? where id=?",new String[]{"1",id});
-                MainActivity.changeDrawerList();
-                onBackPressed();
+                AlertDialog.Builder builder=new AlertDialog.Builder(ListDetail.this);
+                builder.setTitle(de_title);
+                builder.setMessage(R.string.delete_message);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db.execSQL("update list set delete_flag=? where id=?",new String[]{"1",id});
+                        MainActivity.changeDrawerList();
+                        onBackPressed();
+                    }
+                });
+                builder.setNegativeButton("CANCEL",null);
+                AlertDialog dialog=builder.create();
+                dialog.show();
+
         }
         return true;
     }

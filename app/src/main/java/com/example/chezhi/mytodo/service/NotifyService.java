@@ -29,6 +29,8 @@ public class NotifyService extends Service {
                             Log.d("NotifyService.this","The notificationService is running");
                         }
                     }).start();
+                    MainActivity.sqlFunction();
+                    Log.d("NotifyService.this","the notifyList size is "+MainActivity.notifySize());
                     if(MainActivity.notifySize()==0){
                         Log.d("NotifyService.this","the notify list is empty and service will stop");
                         stopSelf();

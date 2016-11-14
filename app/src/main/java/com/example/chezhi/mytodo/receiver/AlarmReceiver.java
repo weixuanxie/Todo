@@ -21,9 +21,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent){
         Log.d("AlarmReceiver.this","receiver is running");
-        NotificationManager manager=(NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+        NotificationManager manager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         intent=new Intent(context,MainActivity.class);
-        PendingIntent pendingIntent=PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent=PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_ONE_SHOT);
         Notification notification=new Notification.Builder(context).setSmallIcon(R.mipmap.ic_launcher).setContentTitle(MainActivity.notifyTitle(0)).setContentText(MainActivity.notifyNotes(0)).setContentIntent(pendingIntent).build();
         notification.defaults=Notification.DEFAULT_ALL;
         manager.notify(1,notification);

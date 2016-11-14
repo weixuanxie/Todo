@@ -8,7 +8,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,9 +30,11 @@
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
         -->
+        <service android:name=".service.StatusNotifyService"/>
         <service android:name=".service.NotifyService" />
 
-        <receiver android:name=".receiver.AlarmReceiver"></receiver>
+        <receiver android:name=".receiver.AlarmReceiver">
+        </receiver>
 
         <meta-data
             android:name="com.google.android.gms.version"
