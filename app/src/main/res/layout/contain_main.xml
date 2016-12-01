@@ -7,7 +7,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:paddingTop="?actionBarSize"
-        android:background="#E8EAF6"
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
